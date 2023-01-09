@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <style>
+        html, body {
+            width: 100%;
+            height:100%;
+            padding:0px;
+            margin:0px;
+        }
+        .control {
+            height:100px;
+            width:100%;
+            background-color: #cecece;
+            border-style:none none solid none;
+            border-color:#5e5e5e;
+        }
+        .result{
+            margin-top:25px;
+        }
+        svg {
+            max-height:85vh;
+        }
+
+        form {
+            display:flex;
+            flex-direction: row;
+            font-family:sans-serif;
+            justify-content: center;
+            padding:30px 0px;
+            font-size:20px;
+            margin:auto;
+        }
+        select, input {
+            font-size:20px;
+        }
+        form .input {
+            margin:auto 20px;
+        }
+    </style>
+    <script src="fractal-line.js"></script>
+</head>
+<body>
+<div class="control">
+<form id="generator" onsubmit="return makeSVG()">
+    <div class="input">
+        <label for="pattern">Pattern:</label>
+        <select name="pattern" id="pattern">
+            <option value="line150">Minkowski curve (1.5)</option>
+            <option value="line161">Minkowski curve (1.61)</option>
+            <option value="koch">Koch</option>
+            <option value="kochQuad">Quadratic Koch</option>
+            <option value="barb1">Barbed wire</option>
+            <option value="barb2">Barb2</option>
+            <option value="u">U/N</option>
+            <option value="maple">maple</option>
+        </select>
+    </div>
+    <div class="input">
+        <label for="base">Base shape:</label>
+        <select name="base" id="base">
+            <option value="line">Line</option>
+            <option value="square">Square</option>
+            <option value="triangle">Triangle</option>
+        </select>   
+    </div>
+    <div class="input">
+        <label for="depth">Depth (>=0):</label>
+        <input type="text" id="depth">
+    </div>
+    <div class="input">
+        <label for="color">Color:</label>
+        <input type="text" id="color">
+    </div>
+    <br>
+    <input type="submit" value="Generate!">
+</form>
+</div>
+<div id="result">
+
+</div>
+<script>
+
+    var form = document.getElementById("generator");
+    function handleForm(event) { event.preventDefault(); } 
+    form.addEventListener('submit', handleForm);
+
+    function makeSVG() {
+        const output = document.createElement('div');
+
+        const result = document.getElementById('result');
+        result.innerHTML = "";
+        result.appendChild(output);
+
+        const pattern = document.getElementById('pattern').value;
+        const base = document.getElementById('base').value;
+        const color = document.getElementById('color').value;
+        const depth = document.getElementById('depth').value;
+        
+        generateSVG(output,pattern,depth,base,color);
+    }
+</script>
+</body>
+</html>
