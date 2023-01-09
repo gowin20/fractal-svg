@@ -131,6 +131,9 @@ function generateSVG(node,type,maxDepth, base="line", fill="transparent") {
     if (fill == "") {
         fill = "transparent";
     }
+    if (maxDepth == "") {
+        maxDepth = 3;
+    }
 
     heading = 0;
 
