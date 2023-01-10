@@ -53,5 +53,11 @@
         "scale":3,
         "bases":["line"],
         "shape":["DRAW",-120,"DRAW",120,"DRAW",120,"DRAW","DRAW",-120,"DRAW",-120,"DRAW",120,"DRAW","DRAW"]
+    },
+    "peano": {
+        "dimension":0,
+        "scale":3,
+        "bases":["line"],
+        "shape":[-90,"DRAW","DRAW",90,"DRAW",90,"DRAW","DRAW",-90,"DRAW",-90,"DRAW","DRAW",90]
     }
 }}
