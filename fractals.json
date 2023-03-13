@@ -6,6 +6,12 @@
         "hexagon":["DRAW",60,"DRAW",60,"DRAW",60,"DRAW",60,"DRAW",60,"DRAW"]
     },
     "fractals": {
+        "square150":{
+            "dimension":1.5,
+            "scale":4,
+            "base":["square"],
+            "shape":["DRAW",90,"DRAW",-90,"DRAW",-90,"DRAW","DRAW",90,"DRAW",90,"DRAW",-90,"DRAW"]
+        },
     "line161": {
         "dimension":1.61,
         "scale":4,

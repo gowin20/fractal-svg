@@ -3,29 +3,35 @@
 <head>
 
     <style>
-        html, body {
+        html, body, .flex {
             width: 100%;
             height:100%;
             padding:0px;
             margin:0px;
         }
-        .control {
-            height:100px;
-            width:100%;
-            background-color: #cecece;
-            border-style:none none solid none;
-            border-color:#5e5e5e;
+        .flex {
+            display: flex;
+            flex-direction: row;
         }
-        .result{
-            margin-top:25px;
+        .control {
+
+            width:30%;
+            padding:0px;
+            background-color: #cecece;
+            border-style:solid;
+        }
+        #result {
+
+            margin:10px;
+            width:70%;
         }
         svg {
             max-height:85vh;
         }
 
-        form {
+        .control {
             display:flex;
-            flex-direction: row;
+            flex-direction: column;
             font-family:sans-serif;
             justify-content: center;
             padding:30px 0px;
@@ -35,70 +41,73 @@
         select, input {
             font-size:20px;
         }
-        form .input {
-            margin:auto 20px;
+        .dim {
+            margin: 10px 10px;
         }
+
     </style>
     <script src="fractal-line.js"></script>
 </head>
 <body>
-<div class="control">
-<form id="generator" onsubmit="return makeSVG()">
-    <div class="input">
-        <label for="pattern">Pattern:</label>
-        <select name="pattern" id="pattern">
-            <option value="line150">Minkowski curve (1.5)</option>
-            <option value="line161">Minkowski curve (1.61)</option>
-            <option value="koch">Koch</option>
-            <option value="kochQuad">Quadratic Koch</option>
-            <option value="barb1">Barbed wire</option>
-            <option value="barb2">Barb2</option>
-            <option value="u">U/N</option>
-            <option value="maple">maple</option>
-        </select>
+    <div class="flex">
+        <div class="control">
+            <div class="dim">
+                <label for="pattern">Pattern:</label>
+                <select name="pattern" id="pattern">
+                    <option value="line150">Minkowski curve (1.5)</option>
+                    <option value="square150">Minkowski square (1.5)</option>
+                    <option value="line161">Minkowski curve (1.61)</option>
+                    <option value="square161">Minkowski square (1.61)</option>
+                    <option value="koch">Koch snowflake</option>
+                    <option value="kochQuad">Quadratic Koch</option>
+                    <option value="barb1">Barbed wire</option>
+                    <option value="barb2">Barb2</option>
+                    <option value="u">U/N</option>
+                    <option value="maple">maple</option>
+                </select>
+            </div>
+            <div class="dim">
+                <label for="base">Base shape:</label>
+                <select name="base" id="base">
+                    <option value="line">Line</option>
+                    <option value="square">Square</option>
+                    <option value="triangle">Triangle</option>
+                </select>   
+            </div>
+            <div class="dim">
+                <label for="depth">Depth:</label>
+                <input type="range" id="depth" min="1" max="5" step="1" value="1">
+                <span id="depthNumber">1</span>
+            </div>
+            <div class="dim">
+                <label for="color">Fill:</label>
+                <input type="color" id="color" value="#ffffff">
+            </div>
+            <br>
+            <button clas="dim" onclick="makeSVG()">Generate!</button>
+        </div>
+        <div id="result">
+        
+        </div>            
     </div>
-    <div class="input">
-        <label for="base">Base shape:</label>
-        <select name="base" id="base">
-            <option value="line">Line</option>
-            <option value="square">Square</option>
-            <option value="triangle">Triangle</option>
-        </select>   
-    </div>
-    <div class="input">
-        <label for="depth">Depth (>=0):</label>
-        <input type="text" id="depth">
-    </div>
-    <div class="input">
-        <label for="color">Color:</label>
-        <input type="text" id="color">
-    </div>
-    <br>
-    <input type="submit" value="Generate!">
-</form>
-</div>
-<div id="result">
-
-</div>
 <script>
+    document.getElementById("depth").addEventListener("input", e => {
+        document.getElementById("depthNumber").innerHTML = e.target.value;
+    })
 
-    var form = document.getElementById("generator");
-    function handleForm(event) { event.preventDefault(); } 
-    form.addEventListener('submit', handleForm);
 
     function makeSVG() {
         const output = document.createElement('div');
 
         const result = document.getElementById('result');
         result.innerHTML = "";
-        result.appendChild(output);
-
+ 
         const pattern = document.getElementById('pattern').value;
         const base = document.getElementById('base').value;
         const color = document.getElementById('color').value;
         const depth = document.getElementById('depth').value;
         
-        generateSVG(output,pattern,depth,base,color);
+        generateSVG(result,pattern,depth,base,color);
     }
 </script>
 </body>

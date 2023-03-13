@@ -155,7 +155,7 @@ function generateSVG(node,type,maxDepth, base="line", fill="transparent") {
 
     // set viewBox to be the full extent of the fractal using helper function
     const bbox = svgBBox(fractalSVG);
-    var viewBox = [bbox.x, bbox.y, bbox.width, bbox.height].join(" ");
+    var viewBox = [bbox.x-1, bbox.y-1, bbox.width+2, bbox.height+2].join(" ");
     fractalSVG.setAttribute("viewBox", viewBox);
 
     // return
