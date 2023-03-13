@@ -219,6 +219,8 @@
 
         })
 
+        let fractal,depth;
+
         document.getElementById("generate").addEventListener("click",() => {
 
             document.getElementById("download-svg").style.display = "block";
@@ -226,15 +228,15 @@
             const result = document.getElementById('result');
             result.innerHTML = "";
      
-            const fractal = document.getElementById('pattern').value;
+            fractal = patternSelect.value;
+            depth = depthSlider.value;
             const outline = document.getElementById('outline').value;
             const fill = document.getElementById('fill').value;
-            const depth = document.getElementById('depth').value;
             
             generateSVG(fractal,depth,outline,fill,result);
         })
 
-
+        // Download SVG file
         document.getElementById("download-svg").addEventListener("click", () => {
             const svg = result.innerHTML;
 
@@ -243,9 +245,12 @@
             console.log(svg)
             console.log(base64doc)
             const a = document.createElement('a');
-            const e = new MouseEvent('click');
-            a.download = 'download.svg';
+
+            
+            a.download = fractal + '-d' + depth;
             a.href = 'data:image/svg+xml;base64,' + base64doc;
+
+            const e = new MouseEvent('click');
             a.dispatchEvent(e);
         })
     </script>
