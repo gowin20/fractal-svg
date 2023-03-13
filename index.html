@@ -14,16 +14,18 @@
             flex-direction: row;
         }
         .control {
-
-            width:30%;
+            position:absolute;
+            width:400px;
+            bottom:10%;
+            left:40%;
+            margin: auto;
             padding:0px;
             background-color: #cecece;
             border-style:solid;
         }
         #result {
-
-            margin:10px;
-            width:70%;
+            width:100%;
+            height:100%;
         }
         svg {
             max-height:85vh;
@@ -45,71 +47,88 @@
             margin: 10px 10px;
         }
 
+        .popup {
+
+        }
+
     </style>
-    <script src="fractal-line.js"></script>
+    <script type="module">
+        
+        import { generateSVG } from "./fractal-line.js"
+        import * as patterns from "./patterns.js"
+
+        console.log(patterns.default)
+        
+        const select = document.getElementById("pattern")
+        Object.keys(patterns.default.options).forEach(value => {
+            let opt = document.createElement("option");
+
+            opt.setAttribute("value",value);
+            opt.innerHTML = patterns.default.options[value].name;
+            select.appendChild(opt)
+        })
+
+        // set initial value
+        document.getElementById("depthNumber").innerHTML = document.getElementById("depth").value
+        // update value dynamically
+        document.getElementById("depth").addEventListener("input", e => {
+            document.getElementById("depthNumber").innerHTML = e.target.value;
+        })
+        
+        
+    
+        document.getElementById("generate").addEventListener("click",() => {
+            const result = document.getElementById('result');
+            result.innerHTML = "";
+     
+            const fractal = document.getElementById('pattern').value;
+            const outline = document.getElementById('outline').value;
+            const fill = document.getElementById('fill').value;
+            const depth = document.getElementById('depth').value;
+            
+            generateSVG(fractal,depth,outline,fill,result);
+        })
+    </script>
 </head>
 <body>
     <div class="flex">
+        <div class="popup">
+            <div class="tab">
+
+            </div>
+            <div class="content">
+
+            </div>
+        </div>
+
+
         <div class="control">
             <div class="dim">
                 <label for="pattern">Pattern:</label>
                 <select name="pattern" id="pattern">
-                    <option value="line150">Minkowski curve (1.5)</option>
-                    <option value="square150">Minkowski square (1.5)</option>
-                    <option value="line161">Minkowski curve (1.61)</option>
-                    <option value="square161">Minkowski square (1.61)</option>
-                    <option value="koch">Koch snowflake</option>
-                    <option value="kochQuad">Quadratic Koch</option>
-                    <option value="barb1">Barbed wire</option>
-                    <option value="barb2">Barb2</option>
-                    <option value="u">U/N</option>
-                    <option value="maple">maple</option>
-                    <option value="peano">peano</option>
                 </select>
             </div>
-            <div class="dim">
-                <label for="base">Base shape:</label>
-                <select name="base" id="base">
-                    <option value="line">Line</option>
-                    <option value="square">Square</option>
-                    <option value="triangle">Triangle</option>
-                </select>   
+            <div class="flex">
+                <div class="dim">
+                    <label for="color">Outline:</label>
+                    <input type="color" id="outline" value="#000000">
+                </div>
+                <div class="dim">
+                    <label for="color">Fill:</label>
+                    <input type="color" id="fill" value="#ffffff">
+                </div>
             </div>
+
             <div class="dim">
                 <label for="depth">Depth:</label>
-                <input type="range" id="depth" min="1" max="5" step="1" value="1">
+                <input type="range" id="depth" min="1" max="6" step="1" value="1">
                 <span id="depthNumber">1</span>
             </div>
-            <div class="dim">
-                <label for="color">Fill:</label>
-                <input type="color" id="color" value="#ffffff">
-            </div>
             <br>
-            <button clas="dim" onclick="makeSVG()">Generate!</button>
+            <button class="dim" id="generate">Generate!</button>
         </div>
-        <div id="result">
-        
-        </div>            
+        <div id="result"></div>         
     </div>
-<script>
-    document.getElementById("depth").addEventListener("input", e => {
-        document.getElementById("depthNumber").innerHTML = e.target.value;
-    })
 
-
-    function makeSVG() {
-        const output = document.createElement('div');
-
-        const result = document.getElementById('result');
-        result.innerHTML = "";
- 
-        const pattern = document.getElementById('pattern').value;
-        const base = document.getElementById('base').value;
-        const color = document.getElementById('color').value;
-        const depth = document.getElementById('depth').value;
-        
-        generateSVG(result,pattern,depth,base,color);
-    }
-</script>
 </body>
 </html>
