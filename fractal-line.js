@@ -2,20 +2,15 @@ import * as patterns from "./patterns.js"
 
 export function generateSVG(type,depth, outline="#000000", fill="transparent",node) {
 
-        if (depth > 10) {
-            console.error("Depth too large for SVG format")
-            alert("Depth too large for SVG format")
-            return
-        }
-    
         // recursive call
         const path = drawFractal(type,depth);
     
         // create SVG element
         const fractalSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         const fractalPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    
-    
+        console.log(fractalSVG);
+
+        fractalSVG.setAttributeNS('http://www.w3.org/2000/xmlns/',"xmlns",'http://www.w3.org/2000/svg')
         fractalSVG.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
         fractalSVG.setAttribute('fill', fill);
         fractalSVG.setAttribute('stroke', outline);
@@ -28,7 +23,7 @@ export function generateSVG(type,depth, outline="#000000", fill="transparent",no
         var viewBox = [bbox.x-1, bbox.y-1, bbox.width+2, bbox.height+2].join(" ");
         fractalSVG.setAttribute("viewBox", viewBox);
     
-        // return
+        // append to DOM
         return node.appendChild(fractalSVG);
 }
 
@@ -45,8 +40,7 @@ function drawFractal(type, maxDepth) {
 
     heading = 0;
     let fractalPath = ``
-    console.log(type)
-    console.log(patterns.default.options)
+
     const baseType = patterns.default.options[type].base;
     const base = patterns.default.bases[baseType];
 
@@ -73,17 +67,15 @@ function drawFractal(type, maxDepth) {
 
 // draws a line based on the current heading and step size
 function drawSegment(size,depth,max) {
-    //console.log(heading)
   if (depth < max) {
     return drawPattern(size/fractal.scale,depth,max)
   }
   else {
 
-    const radHead = (Math.PI * heading) / 180;
+    const headingRad = (Math.PI * heading) / 180;
 
-    const dy = (size * Math.sin(radHead));
-    const dx = (size * Math.cos(radHead));
-    //console.log(size,dx,dy,"\n");
+    const dy = (size * Math.sin(headingRad));
+    const dx = (size * Math.cos(headingRad));
     return `l ${dx} ${dy} `
   }
   
