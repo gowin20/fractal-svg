@@ -1,20 +1,45 @@
 import * as patterns from "./patterns.js"
 
-export function generateSVG(type,depth, outline="#000000", fill="transparent",node) {
+// Global variables
+let heading = 0;
+let sign = "+";
+let fractal, base;
+
+// Invariant: The smallest side will always have length 5
+const smallestSegment = 5;
+
+/*
+Primary function: generateSVG returns an <svg> element containing a self-similar fractal pattern. The pattern is represented as a single <path>
+
+Inputs:
+    type - the type of fractal pattern
+    depth - the level of detail to generate recursively
+    outline - color of SVG path
+    fill - color of SVG fill
+*/
+export function generateSVG(type,depth, outline="#000000", fill="transparent") {
+
+
+        const baseType = patterns.default.options[type].base;
+        base = patterns.default.bases[baseType];
+
+        const shapeType = patterns.default.options[type].shape;
+        fractal = patterns.default.patterns[shapeType];
 
         // recursive call
-        const path = drawFractal(type,depth);
+        const path = drawFractal(depth);
     
         // create SVG element
         const fractalSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         const fractalPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        console.log(fractalSVG);
+
 
         fractalSVG.setAttributeNS('http://www.w3.org/2000/xmlns/',"xmlns",'http://www.w3.org/2000/svg')
         fractalSVG.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
         fractalSVG.setAttribute('fill', fill);
         fractalSVG.setAttribute('stroke', outline);
-    
+
+        fractalPath.setAttribute('stroke-width',3*depth);
         fractalPath.setAttribute('d', path);
         fractalSVG.appendChild(fractalPath);
     
@@ -23,37 +48,26 @@ export function generateSVG(type,depth, outline="#000000", fill="transparent",no
         var viewBox = [bbox.x-1, bbox.y-1, bbox.width+2, bbox.height+2].join(" ");
         fractalSVG.setAttribute("viewBox", viewBox);
     
-        // append to DOM
-        return node.appendChild(fractalSVG);
+        return fractalSVG;
 }
 
-// Global variables
-let heading = 0;
-let side = "LEFT";
-// invariant: the smallest side will always have length 5
-const smallestSegment = 5;
-let fractal;
+/*
+Helper function: drawFractal returns a complete <path> representing a fractal
+*/
+function drawFractal(maxDepth) {
 
-
-
-function drawFractal(type, maxDepth) {
-
-    heading = 0;
     let fractalPath = ``
+   
+    // Number of sides in base shape
+    const baseNumSides = Math.floor((base.length)/2)+1
 
-    const baseType = patterns.default.options[type].base;
-    const base = patterns.default.bases[baseType];
+    // Initial segment size
+    const startingSize = smallestSegment * baseNumSides * (fractal.scale ** maxDepth);
 
-    const shapeType = patterns.default.options[type].shape;
-    fractal = patterns.default.patterns[shapeType];
-    
-    // calculate size
-    const numSides = Math.floor((base.length)/2)+1
-    const startingSize = smallestSegment * numSides * (fractal.scale ** maxDepth);
-
+    // Draw base shape where each side is a fractal pattern
     base.forEach(instruction => {
         if (instruction == "DRAW") {
-            fractalPath += drawSegment(startingSize,0,maxDepth)
+            fractalPath += drawPattern(startingSize,0,maxDepth)
         }
         else {
             heading += instruction;
@@ -65,51 +79,55 @@ function drawFractal(type, maxDepth) {
 
 }
 
-// draws a line based on the current heading and step size
-function drawSegment(size,depth,max) {
-  if (depth < max) {
-    return drawPattern(size/fractal.scale,depth,max)
-  }
-  else {
-
-    const headingRad = (Math.PI * heading) / 180;
-
-    const dy = (size * Math.sin(headingRad));
-    const dx = (size * Math.cos(headingRad));
-    return `l ${dx} ${dy} `
-  }
-  
-}
-
+/*
+Recursive core: drawPattern recursively creates patterns based on a set of input instructions
+*/
 function drawPattern(size,depth,max) {
-    let section = ``;
-    //creates eight segments - a single fractal unit
+    
+    let fractalPath = ``;
+
     fractal.shape.forEach(instruction => {
 
-        if (instruction == "DRAW") {
-            // draw a line
-            section += drawSegment(size,depth+1,max);
-        }
-        else if (instruction == "FLIP") {
-            if (side == "LEFT") side = "RIGHT";
-            else side = "LEFT";
-        }
-        else {
-            // instruction is an angle: change the heading
-            if (side == "LEFT") {
-                heading += instruction;
-            }
-            else {
-                heading -= instruction;
-            }
-            heading %= 360;
-        }
-    })
+        switch (instruction) {
+            // Draw something
+            case "DRAW":
+                if (depth+1 < max) {
+                    // Recursive call
+                    fractalPath += drawPattern(size/fractal.scale,depth+1,max)
+                }
+                else {
+                    // Draw a line
+                    const headingRad = (Math.PI * heading) / 180;
 
-    return section;
+                    const dy = (size * Math.sin(headingRad));
+                    const dx = (size * Math.cos(headingRad));
+                    fractalPath += `l ${dx} ${dy} `
+                }
+                break;
+            
+            //Change rotation direction
+            case "FLIP":
+                if (sign == "+") sign = "-";
+                else sign = "+";
+                break;
+
+            // Adjust heading using degrees
+            default:
+                if (sign == "+") {
+                    heading += instruction;
+                }
+                else {
+                    heading -= instruction;
+                }
+                heading %= 360;
+                break;
+        }
+
+    })
+    return fractalPath;
 }
 
-// helper function to get the bounding box of an SVG before it is rendered
+// Helper function to get the bounding box of an SVG before it is rendered. Necessary in order to display the <path> properly
 function svgBBox (svgEl) {
     let tempDiv = document.createElement('div')
     tempDiv.setAttribute('style', "position:absolute; visibility:hidden; width:0; height:0")
@@ -121,5 +139,4 @@ function svgBBox (svgEl) {
     let bb = tempEl.getBBox()
     document.body.removeChild(tempDiv)
     return bb
-  }
-
+}
