@@ -39,7 +39,7 @@ export function generateSVG(type,depth, outline="#000000", fill="transparent") {
         fractalSVG.setAttribute('fill', fill);
         fractalSVG.setAttribute('stroke', outline);
 
-        fractalPath.setAttribute('stroke-width',3*depth);
+        fractalPath.setAttribute('stroke-width',2*depth);
         fractalPath.setAttribute('d', path);
         fractalSVG.appendChild(fractalPath);
     
