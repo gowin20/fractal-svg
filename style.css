@@ -55,12 +55,16 @@ svg {
 }
 
 #hidden-window {
-    left:155px;
+    left:195px;
     display:none;
 }
 #download-svg {
-    left:195px;
+    left:275px;
     display:none;
+}
+
+#github {
+    left:155px;
 }
 
 #control {
